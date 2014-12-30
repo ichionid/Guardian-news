@@ -78,14 +78,15 @@ function guardian_news_menu() {
  * Admin page for module
  */
 function _guardian_news_admin_form($form, &$form_state) {
-/*
+
   $form['title'] = array(
     '#type' => 'markup',
-    '#value' => '<p>Settings for the Guardian news block.</p>',
+    '#markup' => '<p>Settings for the Guardian news block.</p>',
   );
-*/
+
   $form['post_number'] = array(
     '#type' => 'select',
+    '#title' => t('Number of articles to be displayed'),
     '#options' => array(
       1 => '1',
       2 => '2',
