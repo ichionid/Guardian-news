@@ -1,3 +1,4 @@
 name = Guardian news module
 description = Implements an AngularJS-driven block that presents news from Guardian.
 core = 7.x
+files[] = guardian_news.admin.php

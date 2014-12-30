@@ -57,3 +57,53 @@ function guardian_news_theme() {
     ),
   );
 }
+
+/**
+ * Implements hook_menu().
+ */
+function guardian_news_menu() {
+  $items['admin/structure/guardian_news'] = array(
+    'title' => 'The Guardian news',
+    'type' => MENU_NORMAL_ITEM,
+    'description' => 'Admin page for module guardian_news.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_guardian_news_admin_form'),
+    'access arguments' => array('administer content'),
+  );
+
+  return $items;
+}
+
+/**
+ * Admin page for module
+ */
+function _guardian_news_admin_form($form, &$form_state) {
+/*
+  $form['title'] = array(
+    '#type' => 'markup',
+    '#value' => '<p>Settings for the Guardian news block.</p>',
+  );
+*/
+  $form['post_number'] = array(
+    '#type' => 'select',
+    '#options' => array(
+      1 => '1',
+      2 => '2',
+      3 => '3',
+      4 => '4',
+      5 => '5',
+      6 => '6',
+      7 => '7',
+      8 => '8',
+      9 => '9',
+      10 => '10',
+    ),
+  );
+
+  $form['submit_button'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save changes'),
+  );
+
+  return $form;
+}
