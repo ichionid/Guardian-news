@@ -23,8 +23,11 @@ function guardian_news_menu() {
 /**
  * Admin page for module
  */
-function _guardian_news_admin_page() {
-  $page = array();
+function _guardian_news_admin_page(&$form, $form_state) {
+
+  $form['title'] = array(
+
+  );
 
 
 }
