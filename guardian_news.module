@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file guardian_latest_news.module
+ * @file guardian_news.module
  *
  * Implements an AngularJS-driven block.
  */
@@ -9,7 +9,7 @@
 /**
  * Implements hook_block_info().
  */
-function guardian_latest_news_block_info() {
+function guardian_news_block_info() {
   $blocks['guardian_latest_block'] = array(
     'info' => t('Latest articles from guardian'),
   );
@@ -20,12 +20,12 @@ function guardian_latest_news_block_info() {
 /**
  * Implements hook_block_view().
  */
-function guardian_latest_news_block_view($delta = '') {
+function guardian_news_block_view($delta = '') {
   $block = array();
 
   switch ($delta) {
     case 'guardian_latest_block':
-      $path = drupal_get_path('module', 'guardian_latest_news');
+      $path = drupal_get_path('module', 'guardian_news');
       drupal_add_js(array('guardian_latest_news' => array('url' => 'http://content.guardianapis.com/search')), 'setting');
       drupal_add_js(array('guardian_latest_news' => array('apiKey' => 'hfqncwz9hxwstua2f8qszjj8')), 'setting');
       drupal_add_js(array('guardian_latest_news' => array('pageSize' => 3)), 'setting');
@@ -49,10 +49,10 @@ function guardian_latest_news_block_view($delta = '') {
 /**
  * Implements hook_theme().
  */
-function guardian_latest_news_theme() {
+function guardian_news_theme() {
   return array(
     'guardian_latest_news' => array(
-      'template' => 'guardian-latest-news',
+      'template' => 'guardian_news',
       'variables' => array(),
     ),
   );
