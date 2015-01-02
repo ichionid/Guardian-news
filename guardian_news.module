@@ -87,7 +87,15 @@ function _guardian_news_admin_form($form, &$form_state) {
     '#markup' => '<p>Settings for the Guardian news block.</p>',
   );
 
-  // Nunmer of posts.
+  // API key.
+  $form['api_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('API key:'),
+    '#description' => t('API key to The Guardian API.'),
+    '#default_value' => $values['api_key'],
+  );
+
+  // Number of posts.
   $form['post_number'] = array(
     '#type' => 'select',
     '#title' => t('Number of articles:'),
@@ -163,6 +171,8 @@ function _guardian_news_admin_form_submit($form, &$form_state) {
 
   $values = $form_state['values'];
 
+  variable_set('guardian_options_api_key', $values['api_key']);
+
   variable_set('guardian_options_num', $values['post_number']);
 
   variable_set('guardian_options_sections', implode(',', $values['sections']));
@@ -180,6 +190,8 @@ function _guardian_news_admin_load_options() {
 
   $values = array();
 
+  $values['api_key'] = variable_get('guardian_options_api_key', 'test');
+
   $values['post_number'] = variable_get('guardian_options_num', 3);
 
   $values['sections'] = explode(',', variable_get('guardian_options_sections', ''));
@@ -189,6 +201,13 @@ function _guardian_news_admin_load_options() {
   $values['sorting'] = variable_get('guardian_options_sorting', 'default');
 
   return $values;
+}
+
+/**
+ * Get API key.
+ */
+function _guardian_news_admin_get_api_key() {
+  return variable_get('guardian_options_api_key', 'test');
 }
 
 /**
@@ -206,14 +225,14 @@ function guardianapi_get_sections_all() {
 /**
  * Function that performs a query in Guardian's API.
  */
-function guardianapi_query($apicom, $api_key = 'test', $options = array()) {
+function guardianapi_query($apicom, $options = array()) {
   // Check for valid command.
   if (!in_array($apicom, array('search', 'tags', 'sections'))) {
     return FALSE;
   }
 
   // Process options.
-  $options['api-key'] = $api_key;
+  $options['api-key'] = _guardian_news_admin_get_api_key();
   foreach ($options as $key => &$option) {
     $option = sprintf('%s=%s', $key, $option);
   }
