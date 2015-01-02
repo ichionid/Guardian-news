@@ -116,7 +116,8 @@ function _guardian_news_admin_form($form, &$form_state) {
   ksort($sections);
   $form['sections'] = array(
     '#type' => 'checkboxes',
-    '#title' => t('Sections to be displayed'),
+    '#title' => t('Sections:'),
+    '#description' => t('Allows you to select the thematic section to be displayed.'),
     '#options' => $sections,
     '#default_value' => $values['sections'],
   );
