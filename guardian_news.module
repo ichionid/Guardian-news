@@ -79,7 +79,7 @@ function guardian_news_menu() {
  */
 function _guardian_news_admin_form($form, &$form_state) {
 
-  $values = _guardian_news_admin_form_load();
+  $values = _guardian_news_admin_load_options();
 
   // Title.
   $form['title'] = array(
@@ -119,13 +119,6 @@ function _guardian_news_admin_form($form, &$form_state) {
     '#title' => t('Sections to be displayed'),
     '#options' => $sections,
     '#default_value' => $values['sections'],
-  );
-
-  // Tags.
-  $form['tags'] = array(
-    '#type' => 'autocomplete',
-    '#title' => t('Filter by tags'),
-    '#options' => $sections,
   );
 
   // Search.
@@ -173,8 +166,6 @@ function _guardian_news_admin_form_submit($form, &$form_state) {
 
   variable_set('guardian_options_sections', implode(',', $values['sections']));
 
-  variable_set('guardian_options_tags', $values['tags']);
-
   variable_set('guardian_options_search', $values['search']);
 
   variable_set('guardian_options_sorting', $values['sorting']);
@@ -184,15 +175,13 @@ function _guardian_news_admin_form_submit($form, &$form_state) {
 /**
  * Load options.
  */
-function _guardian_news_admin_form_load() {
+function _guardian_news_admin_load_options() {
 
   $values = array();
 
   $values['post_number'] = variable_get('guardian_options_num', 3);
 
   $values['sections'] = explode(',', variable_get('guardian_options_sections', ''));
-
-  $values['tags'] = variable_get('guardian_options_tags', '');
 
   $values['search'] = variable_get('guardian_options_search', '');
 
@@ -217,12 +206,13 @@ function guardianapi_get_sections_all() {
  * Function that performs a query in Guardian's API.
  */
 function guardianapi_query($apicom, $api_key = 'test', $options = array()) {
+  // Check for valid command.
   if (!in_array($apicom, array('search', 'tags', 'sections'))) {
     return FALSE;
   }
 
+  // Build URL and fetch.
   $url = sprintf('http://content.guardianapis.com/%s?api-key=%s', $apicom, $api_key);
-
   $response_json = file_get_contents($url);
 
   if ($response_json) {
