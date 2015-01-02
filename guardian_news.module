@@ -75,7 +75,7 @@ function guardian_news_menu() {
 }
 
 /**
- * Admin page for module
+ * Admin page for module.
  */
 function _guardian_news_admin_form($form, &$form_state) {
 
@@ -84,9 +84,27 @@ function _guardian_news_admin_form($form, &$form_state) {
     '#markup' => '<p>Settings for the Guardian news block.</p>',
   );
 
+  $sections = guardianapi_get_sections_all();
+  foreach ($sections as $key => $section) {
+    $sections[$section['id']] = $section['webTitle'];
+    unset($sections[$key]);
+  }
+  ksort($sections);
+  $form['sections'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Sections to be displayed'),
+    '#options' => $sections,
+  );
+
+  $form['tags'] = array(
+    '#type' => 'autocomplete',
+    '#title' => t('Filter by tags'),
+    '#options' => $sections,
+  );
+
   $form['post_number'] = array(
     '#type' => 'select',
-    '#title' => t('Number of articles to be displayed'),
+    '#title' => t('Number of articles to be displayed (maximum)'),
     '#options' => array(
       1 => '1',
       2 => '2',
@@ -107,4 +125,46 @@ function _guardian_news_admin_form($form, &$form_state) {
   );
 
   return $form;
+}
+
+/**
+ * Admin page submit function.
+ */
+function _guardian_news_admin_form_submit($form, &$form_state) {
+
+
+}
+
+/**
+ * Returns all the article sections.
+ */
+function guardianapi_get_sections_all() {
+  $sections = guardianapi_query('sections');
+  if (!empty($sections)) {
+    return $sections;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Function that performs a query in Guardian's API.
+ */
+function guardianapi_query($apicom, $api_key = 'test', $options = array()) {
+  if (!in_array($apicom, array('search', 'tags', 'sections'))) {
+    return FALSE;
+  }
+
+  $url = sprintf('http://content.guardianapis.com/%s?api-key=%s', $apicom, $api_key);
+
+  $response_json = file_get_contents($url);
+
+  if ($response_json) {
+    $response = json_decode($response_json, TRUE);
+    if (!empty($response['response']['results'])) {
+      return $response['response']['results'];
+    }
+  }
+
+  return FALSE;
 }
