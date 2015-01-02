@@ -84,7 +84,7 @@ function _guardian_news_admin_form($form, &$form_state) {
   // Title.
   $form['title'] = array(
     '#type' => 'markup',
-    '#markup' => '<p>Settings for the Guardian news block.</p>',
+    '#markup' => '<p>Settings for The Guardian news block.</p>',
   );
 
   // API key.
