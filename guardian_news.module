@@ -212,8 +212,14 @@ function guardianapi_query($apicom, $api_key = 'test', $options = array()) {
     return FALSE;
   }
 
+  // Process options.
+  $options['api-key'] = $api_key;
+  foreach ($options as $key => &$option) {
+    $option = sprintf('%s=%s', $key, $option);
+  }
+
   // Build URL and fetch.
-  $url = sprintf('http://content.guardianapis.com/%s?api-key=%s', $apicom, $api_key);
+  $url = sprintf('http://content.guardianapis.com/%s?%s', $apicom, implode('&', $options));
   $response_json = file_get_contents($url);
 
   if ($response_json) {
