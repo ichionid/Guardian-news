@@ -3,7 +3,7 @@
 /**
  * @file guardian_news.module
  *
- * Implements an AngularJS-driven block.
+ * Implements a block with articles from The Guardian's API.
  */
 
 /**
@@ -11,7 +11,7 @@
  */
 function guardian_news_block_info() {
   $blocks['guardian_block'] = array(
-    'info' => t('Latest articles from guardian'),
+    'info' => t('Latest articles from The Guardian'),
   );
 
   return $blocks;
@@ -31,9 +31,9 @@ function guardian_news_block_view($delta = '') {
       drupal_add_js(array('guardian_latest_news' => array('pageSize' => 3)), 'setting');
       drupal_add_js(array('guardian_latest_news' => array('orderBy' => 'newest')), 'setting');
 
-      $block['subject'] = t('Articles from guardian');
+      $block['subject'] = t('Articles from The Guardian');
       $block['content'] = array(
-        '#theme' => 'guardian_latest_news',
+        '#theme' => 'guardian_news_angular',
         '#attached' => array(
           'js' => array(
             'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js',
@@ -156,6 +156,14 @@ function _guardian_news_admin_form($form, &$form_state) {
     '#default_value' => $values['sorting'],
   );
 
+  // Angular.
+  $form['angular'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable AngularJS:'),
+    '#description' => t('Allows you to use the module with AngularJS.'),
+    '#default_value' => $values['angular'],
+  );
+
   // Submit button.
   $form['submit_button'] = array(
     '#type' => 'submit',
@@ -185,6 +193,8 @@ function _guardian_news_admin_form_submit($form, &$form_state) {
 
   variable_set('guardian_options_sorting', $values['sorting']);
 
+  variable_set('guardian_options_angular', $values['angular']);
+
 }
 
 /**
@@ -203,6 +213,8 @@ function _guardian_news_admin_load_options() {
   $values['search'] = variable_get('guardian_options_search', '');
 
   $values['sorting'] = variable_get('guardian_options_sorting', 'default');
+
+  $values['angular'] = variable_get('guardian_options_angular', 0);
 
   return $values;
 }
