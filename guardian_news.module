@@ -51,8 +51,12 @@ function guardian_news_block_view($delta = '') {
  */
 function guardian_news_theme() {
   return array(
-    'guardian_latest_news' => array(
+    'guardian_news' => array(
       'template' => 'guardian_news',
+      'variables' => array(),
+    ),
+    'guardian_latest_news' => array(
+      'template' => 'guardian_latest_news',
       'variables' => array(),
     ),
   );
@@ -173,7 +177,7 @@ function _guardian_news_admin_form_submit($form, &$form_state) {
 
   variable_set('guardian_options_api_key', $values['api_key']);
 
-  variable_set('guardian_options_num', $values['post_number']);
+  variable_set('guardian_options_post_number', $values['post_number']);
 
   variable_set('guardian_options_sections', implode(',', $values['sections']));
 
@@ -192,7 +196,7 @@ function _guardian_news_admin_load_options() {
 
   $values['api_key'] = variable_get('guardian_options_api_key', 'test');
 
-  $values['post_number'] = variable_get('guardian_options_num', 3);
+  $values['post_number'] = variable_get('guardian_options_post_number', 3);
 
   $values['sections'] = explode(',', variable_get('guardian_options_sections', ''));
 
