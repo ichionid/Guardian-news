@@ -1,17 +1,20 @@
 <?php
 /**
  * @file
- * AngularJS template to render a weather block.
+ * Template for The Guardian news module.
  */
 ?>
-<div ng-app="drupalGuardianApp">
-  <div ng-controller="DrupalGuardianLatestNews">
+<div>
+  <div>
 
-    <li ng-repeat="article in articles">
-      <a href="{{article.webUrl}}"><h3>{{article.webTitle}}</h3></a>
+    <?php foreach ($articles as $article) : ?>
+    <li>
+      <a href=""><h3>{{article.webTitle}}</h3></a>
       <p>{{article.webPublicationDate| date:"MM/dd/yyyy 'at' h:mma"}}</p>
       <p>Temperature: {{article.sectionName}}</p>
     </li>
-    <button ng-click="change()">More</button>
+    <?php endforeach; ?>
+
+    <button>More</button>
   </div>
 </div>
