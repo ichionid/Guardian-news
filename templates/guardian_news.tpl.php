@@ -3,7 +3,6 @@
  * @file
  * Template for The Guardian news module.
  */
-dpm($articles);
 ?>
 <div>
   <div>
