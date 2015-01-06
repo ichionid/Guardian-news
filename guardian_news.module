@@ -21,26 +21,35 @@ function guardian_news_block_info() {
  * Implements hook_block_view().
  */
 function guardian_news_block_view($delta = '') {
-  $block = array();
+  $path = drupal_get_path('module', 'guardian_news');
 
+  $block = array();
   switch ($delta) {
     case 'guardian_block':
-      $path = drupal_get_path('module', 'guardian_news');
-      drupal_add_js(array('guardian_latest_news' => array('url' => 'http://content.guardianapis.com/search')), 'setting');
-      drupal_add_js(array('guardian_latest_news' => array('apiKey' => 'hfqncwz9hxwstua2f8qszjj8')), 'setting');
-      drupal_add_js(array('guardian_latest_news' => array('pageSize' => 3)), 'setting');
-      drupal_add_js(array('guardian_latest_news' => array('orderBy' => 'newest')), 'setting');
-
       $block['subject'] = t('Articles from The Guardian');
-      $block['content'] = array(
-        '#theme' => 'guardian_news_angular',
-        '#attached' => array(
-          'js' => array(
-            'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js',
-            $path . 'js/guardian_news.js',
+
+      if (variable_get('guardian_options_angular', 0) == 0) {
+        $variables = array(
+          'articles' => _guardian_news_get_articles(),
+        );
+        $block['content'] = theme('guardian_news', $variables);
+      }
+      else {
+        drupal_add_js(array('guardian_latest_news' => array('url' => 'http://content.guardianapis.com/search')), 'setting');
+        drupal_add_js(array('guardian_latest_news' => array('apiKey' => 'hfqncwz9hxwstua2f8qszjj8')), 'setting');
+        drupal_add_js(array('guardian_latest_news' => array('pageSize' => 3)), 'setting');
+        drupal_add_js(array('guardian_latest_news' => array('orderBy' => 'newest')), 'setting');
+
+        $block['content'] = array(
+          '#theme' => 'guardian_news_angular',
+          '#attached' => array(
+            'js' => array(
+              'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js',
+              $path . 'js/guardian_news.js',
+            ),
           ),
-        ),
-      );
+        );
+      }
       break;
   }
   return $block;
@@ -227,6 +236,36 @@ function _guardian_news_admin_get_api_key() {
 }
 
 /**
+ * Fetch articles according to settings for the non-Angular implementation.
+ */
+function _guardian_news_get_articles() {
+  $options = _guardian_news_admin_load_options();
+
+  foreach ($options['sections'] as $key => $section) {
+    if (empty($section)) {
+      unset($options['sections'][$key]);
+    }
+  }
+
+  $query_options = array(
+    'page-size' => $options['post_number'],
+    'order-by' => $options['sorting'],
+  );
+
+  if (!empty($options['sections'])) {
+    $query_options['section'] = implode('|', $options['sections']);
+  }
+
+  if (!empty($options['search'])) {
+    $query_options['q'] = $options['search'];
+  }
+
+  $results = guardianapi_query('search', $query_options);
+
+  return $results;
+}
+
+/**
  * Returns all the article sections.
  */
 function guardianapi_get_sections_all() {
@@ -241,7 +280,7 @@ function guardianapi_get_sections_all() {
 /**
  * Function that performs a query in Guardian's API.
  */
-function guardianapi_query($apicom, $options = array()) {
+function guardianapi_query($apicom, &$options = array()) {
   // Check for valid command.
   if (!in_array($apicom, array('search', 'tags', 'sections'))) {
     return FALSE;
@@ -259,9 +298,7 @@ function guardianapi_query($apicom, $options = array()) {
 
   if ($response_json) {
     $response = json_decode($response_json, TRUE);
-    if (!empty($response['response']['results'])) {
-      return $response['response']['results'];
-    }
+    return $response['response']['results'];
   }
 
   return FALSE;
