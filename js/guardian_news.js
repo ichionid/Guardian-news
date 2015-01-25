@@ -9,9 +9,9 @@ var app = angular.module('drupalGuardianApp', [])
     var pageSize = Drupal.settings.guardian_latest_news.pageSize;
     var orderBy = Drupal.settings.guardian_latest_news.orderBy;
     var sections = Drupal.settings.guardian_latest_news.sections;
-    var moreText = Drupal.settings.guardian_latest_news.moreText;
     var q = Drupal.settings.guardian_latest_news.q;
     $scope.more = Drupal.settings.guardian_latest_news.more;
+    $scope.moreText = Drupal.settings.guardian_latest_news.moreText;
     // Define a function to process form submission.
     $scope.page = 1;
     $scope.change = function () {
@@ -21,7 +21,6 @@ var app = angular.module('drupalGuardianApp', [])
           'page': $scope.page,
           'page-size': pageSize,
           'q': q,
-          'moreText': moreText,
           'sections': sections,
           'order-by': orderBy,
           callback: 'JSON_CALLBACK'
