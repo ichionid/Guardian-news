@@ -21,7 +21,6 @@ function guardian_news_block_info() {
  * Implements hook_block_view().
  */
 function guardian_news_block_view($delta = '') {
-  $path = drupal_get_path('module', 'guardian_news');
 
   $block = array();
   switch ($delta) {
@@ -35,17 +34,29 @@ function guardian_news_block_view($delta = '') {
         $block['content'] = theme('guardian_news', $variables);
       }
       else {
+        $options = _guardian_news_admin_load_options();
         drupal_add_js(array('guardian_latest_news' => array('url' => 'http://content.guardianapis.com/search')), 'setting');
-        drupal_add_js(array('guardian_latest_news' => array('apiKey' => 'hfqncwz9hxwstua2f8qszjj8')), 'setting');
-        drupal_add_js(array('guardian_latest_news' => array('pageSize' => 3)), 'setting');
-        drupal_add_js(array('guardian_latest_news' => array('orderBy' => 'newest')), 'setting');
+        drupal_add_js(array('guardian_latest_news' => array('apiKey' => $options['api_key'])), 'setting');
+        drupal_add_js(array('guardian_latest_news' => array('pageSize' => $options['post_number'])), 'setting');
+        drupal_add_js(array('guardian_latest_news' => array('orderBy' => $options['sorting'])), 'setting');
+        foreach ($options['sections'] as $key => $section) {
+          if (empty($section)) {
+            unset($options['sections'][$key]);
+          }
+        }
+        if (!empty($options['sections'])) {
+          drupal_add_js(array('guardian_latest_news' => array('sections' => implode('|', $options['sections']))), 'setting');
+        }
+        if (!empty($options['search'])) {
+          drupal_add_js(array('guardian_latest_news' => array('q' => $options['search'])), 'setting');
+        }
 
         $block['content'] = array(
           '#theme' => 'guardian_news_angular',
           '#attached' => array(
             'js' => array(
               'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js',
-              $path . 'js/guardian_news.js',
+              drupal_get_path('module', 'guardian_news') . '/js/guardian_news.js',
             ),
           ),
         );
@@ -75,7 +86,7 @@ function guardian_news_theme() {
  * Implements hook_menu().
  */
 function guardian_news_menu() {
-  $items['admin/structure/guardian_news'] = array(
+  $items['admin/config/content/guardian_news'] = array(
     'title' => 'The Guardian news',
     'type' => MENU_NORMAL_ITEM,
     'description' => 'Admin page for module guardian_news.',

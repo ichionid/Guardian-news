@@ -1,7 +1,6 @@
 /**
  * Renders latest guardian news.
  */
-console.log('App out');
 var app = angular.module('drupalGuardianApp', [])
   .controller('DrupalGuardianLatestNews', function ($scope, $http, $log) {
     // Set default values for our form fields.
@@ -9,6 +8,8 @@ var app = angular.module('drupalGuardianApp', [])
     var apiKey = Drupal.settings.guardian_latest_news.apiKey;
     var pageSize = Drupal.settings.guardian_latest_news.pageSize;
     var orderBy = Drupal.settings.guardian_latest_news.orderBy;
+    var sections = Drupal.settings.guardian_latest_news.sections;
+    var q = Drupal.settings.guardian_latest_news.q;
     // Define a function to process form submission.
     $scope.page = 1;
     $scope.change = function () {
@@ -17,6 +18,8 @@ var app = angular.module('drupalGuardianApp', [])
           'api-key': apiKey,
           'page': $scope.page,
           'page-size': pageSize,
+          'q': q,
+          'sections': sections,
           'order-by': orderBy,
           callback: 'JSON_CALLBACK'
         }}).
