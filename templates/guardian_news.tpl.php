@@ -16,6 +16,6 @@
     <?php endforeach; ?>
     </ul>
 
-    <div><a href="">More</a></div>
+    <div><a href=""><?php t('More'); ?></a></div>
   </div>
 </div>
