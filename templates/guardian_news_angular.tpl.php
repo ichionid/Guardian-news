@@ -10,8 +10,8 @@
     <li ng-repeat="article in articles">
       <a href="{{article.webUrl}}"><h3>{{article.webTitle}}</h3></a>
       <p>{{article.webPublicationDate| date:"MM/dd/yyyy 'at' h:mma"}}</p>
-      <p>Temperature: {{article.sectionName}}</p>
+      <p>{{article.sectionName}}</p>
     </li>
-    <button ng-click="change()">More</button>
+    <button ng-show="more == 1" ng-click="change()">{{moreText}}</button>
   </div>
 </div>
