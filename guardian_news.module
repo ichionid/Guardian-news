@@ -28,8 +28,13 @@ function guardian_news_block_view($delta = '') {
       $block['subject'] = t('Articles from The Guardian');
 
       if (variable_get('guardian_options_angular', 0) == 0) {
+
+        $articles = _guardian_news_get_articles();
+
+        $articles = _guardian_news_preprocess_block_vars($articles);
+
         $variables = array(
-          'articles' => _guardian_news_get_articles(),
+          'articles' => $articles,
         );
         $block['content'] = theme('guardian_news', $variables);
       }
@@ -249,10 +254,21 @@ function _guardian_news_admin_load_options() {
   $values['sorting'] = variable_get('guardian_options_sorting', 'default');
 
   $values['angular'] = variable_get('guardian_options_angular', 0);
-  
+
   $values['more'] = variable_get('guardian_options_more', 0);
 
   return $values;
+}
+
+/**
+ * Preprocess function for article list.
+ */
+function _guardian_news_preprocess_block_vars($articles) {
+  foreach ($articles as &$article) {
+    $article['webPublicationDate'] = format_date(strtotime($article['webPublicationDate']), 'custom', 'D, d/m/Y - H:i');
+  }
+
+  return $articles;
 }
 
 /**
