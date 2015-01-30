@@ -194,11 +194,11 @@ function _guardian_news_admin_form($form, &$form_state) {
     '#default_value' => $values['angular'],
   );
 
-    // Angular.
+    // More link.
   $form['more'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Show more') . ':',
-    '#description' => t('Allows visitor to view more articles.'),
+    '#title' => t('Show more'),
+    '#description' => t('Adds link at the bottom that loads more content (JS only).'),
     '#default_value' => $values['more'],
   );
 
@@ -219,22 +219,17 @@ function _guardian_news_admin_form($form, &$form_state) {
  */
 function _guardian_news_admin_form_submit($form, &$form_state) {
 
-  $values = $form_state['values'];
+  $values = array(
+    'api_key' => $form_state['values']['api_key'],
+    'post_number' => $form_state['values']['post_number'],
+    'sections' => $form_state['values']['sections'],
+    'search' => $form_state['values']['search'],
+    'sorting' => $form_state['values']['sorting'],
+    'angular' => $form_state['values']['angular'],
+    'more' => $form_state['values']['more'],
+  );
 
-  variable_set('guardian_options_api_key', $values['api_key']);
-
-  variable_set('guardian_options_post_number', $values['post_number']);
-
-  variable_set('guardian_options_sections', implode(',', $values['sections']));
-
-  variable_set('guardian_options_search', $values['search']);
-
-  variable_set('guardian_options_sorting', $values['sorting']);
-
-  variable_set('guardian_options_angular', $values['angular']);
-
-  variable_set('guardian_options_more', $values['more']);
-
+  variable_set('guardian_options', $values);
 }
 
 /**
@@ -242,21 +237,17 @@ function _guardian_news_admin_form_submit($form, &$form_state) {
  */
 function _guardian_news_admin_load_options() {
 
-  $values = array();
+  $default_values = array(
+    'api_key' => 'test',
+    'post_number' => 3,
+    'sections' => array(),
+    'search' => '',
+    'sorting' => 'default',
+    'angular' => 0,
+    'more' => 0,
+   );
 
-  $values['api_key'] = variable_get('guardian_options_api_key', 'test');
-
-  $values['post_number'] = variable_get('guardian_options_post_number', 3);
-
-  $values['sections'] = explode(',', variable_get('guardian_options_sections', ''));
-
-  $values['search'] = variable_get('guardian_options_search', '');
-
-  $values['sorting'] = variable_get('guardian_options_sorting', 'default');
-
-  $values['angular'] = variable_get('guardian_options_angular', 0);
-
-  $values['more'] = variable_get('guardian_options_more', 0);
+  $values = variable_get('guardian_options', $default_values);
 
   return $values;
 }
