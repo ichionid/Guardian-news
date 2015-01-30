@@ -36,6 +36,7 @@ function guardian_news_block_view($delta = '') {
         $variables = array(
           'articles' => $articles,
         );
+        drupal_add_css(drupal_get_path('module', 'guardian_news') . '/css/guardian_news.css');
         $block['content'] = theme('guardian_news', $variables);
       }
       else {
@@ -265,6 +266,7 @@ function _guardian_news_admin_load_options() {
  */
 function _guardian_news_preprocess_block_vars($articles) {
   foreach ($articles as &$article) {
+    $article['webTitle'] = truncate_utf8($article['webTitle'], 60, TRUE, TRUE);
     $article['webPublicationDate'] = format_date(strtotime($article['webPublicationDate']), 'custom', 'D, d/m/Y - H:i');
   }
 

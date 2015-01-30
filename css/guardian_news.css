@@ -1,0 +1,28 @@
+/**
+ * @file
+ * Template styling for The Guardian news module.
+ */
+
+.sidebar .block-guardian-news {
+  padding: 10px 15px;
+}
+
+#guardian-news-articles ul {
+  list-style: none inside none;
+}
+
+#guardian-news-articles ul li {
+  font-family: Verdana;
+  font-size: 12px;
+  border-bottom: 1px dotted #303030;
+}
+
+#guardian-news-articles .publication-date {
+  font-size: 11px;
+  font-style: italic;
+}
+
+#guardian-news-articles .section-name {
+  font-size: 11px;
+  font-style: italic;
+}
