@@ -6,6 +6,19 @@
  * Implements a block with articles from The Guardian's API.
  */
 
+function guardian_news_permission() {
+  return array(
+    'view guardian block' => array(
+      'title' => t('View The Guardian block'),
+      'description' => t('Permission to view The Guardian block.'),
+    ),
+    'administer guardian module' => array(
+      'title' => t('Administer The Guardian module'),
+      'description' => t('Perform administration tasks for my The Guardian module.'),
+    ),
+  );
+}
+
 /**
  * Implements hook_block_info().
  */
@@ -25,51 +38,54 @@ function guardian_news_block_view($delta = '') {
   $block = array();
   switch ($delta) {
     case 'guardian_block':
+
+      if (user_access('view guardian block')) {
       $block['subject'] = t('Articles from The Guardian');
 
-      if (variable_get('guardian_options_angular', 0) == 0) {
+        if (variable_get('guardian_options_angular', 0) == 0) {
 
-        $articles = _guardian_news_get_articles();
+          $articles = _guardian_news_get_articles();
 
-        $articles = _guardian_news_preprocess_block_vars($articles);
+          $articles = _guardian_news_preprocess_block_vars($articles);
 
-        $variables = array(
-          'articles' => $articles,
-        );
-        drupal_add_css(drupal_get_path('module', 'guardian_news') . '/css/guardian_news.css');
-        $block['content'] = theme('guardian_news', $variables);
-      }
-      else {
-        $options = _guardian_news_admin_load_options();
-        drupal_add_js(array('guardian_latest_news' => array('url' => 'http://content.guardianapis.com/search')), 'setting');
-        drupal_add_js(array('guardian_latest_news' => array('apiKey' => $options['api_key'])), 'setting');
-        drupal_add_js(array('guardian_latest_news' => array('pageSize' => $options['post_number'])), 'setting');
-        drupal_add_js(array('guardian_latest_news' => array('orderBy' => $options['sorting'])), 'setting');
-        foreach ($options['sections'] as $key => $section) {
-          if (empty($section)) {
-            unset($options['sections'][$key]);
+          $variables = array(
+            'articles' => $articles,
+          );
+          drupal_add_css(drupal_get_path('module', 'guardian_news') . '/css/guardian_news.css');
+          $block['content'] = theme('guardian_news', $variables);
+        }
+        else {
+          $options = _guardian_news_admin_load_options();
+          drupal_add_js(array('guardian_latest_news' => array('url' => 'http://content.guardianapis.com/search')), 'setting');
+          drupal_add_js(array('guardian_latest_news' => array('apiKey' => $options['api_key'])), 'setting');
+          drupal_add_js(array('guardian_latest_news' => array('pageSize' => $options['post_number'])), 'setting');
+          drupal_add_js(array('guardian_latest_news' => array('orderBy' => $options['sorting'])), 'setting');
+          foreach ($options['sections'] as $key => $section) {
+            if (empty($section)) {
+              unset($options['sections'][$key]);
+            }
           }
-        }
-        if (!empty($options['sections'])) {
-          drupal_add_js(array('guardian_latest_news' => array('sections' => implode('|', $options['sections']))), 'setting');
-        }
-        if (!empty($options['search'])) {
-          drupal_add_js(array('guardian_latest_news' => array('q' => $options['search'])), 'setting');
-        }
-        if (!empty($options['more'])) {
-          drupal_add_js(array('guardian_latest_news' => array('more' => $options['more'])), 'setting');
-          drupal_add_js(array('guardian_latest_news' => array('moreText' => t('More'))), 'setting');
-        }
+          if (!empty($options['sections'])) {
+            drupal_add_js(array('guardian_latest_news' => array('sections' => implode('|', $options['sections']))), 'setting');
+          }
+          if (!empty($options['search'])) {
+            drupal_add_js(array('guardian_latest_news' => array('q' => $options['search'])), 'setting');
+          }
+          if (!empty($options['more'])) {
+            drupal_add_js(array('guardian_latest_news' => array('more' => $options['more'])), 'setting');
+            drupal_add_js(array('guardian_latest_news' => array('moreText' => t('More'))), 'setting');
+          }
 
-        $block['content'] = array(
-          '#theme' => 'guardian_news_angular',
-          '#attached' => array(
-            'js' => array(
-              'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js',
-              drupal_get_path('module', 'guardian_news') . '/js/guardian_news.js',
+          $block['content'] = array(
+            '#theme' => 'guardian_news_angular',
+            '#attached' => array(
+              'js' => array(
+                'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js',
+                drupal_get_path('module', 'guardian_news') . '/js/guardian_news.js',
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
       break;
   }
@@ -102,7 +118,7 @@ function guardian_news_menu() {
     'description' => 'Admin page for module guardian_news.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_guardian_news_admin_form'),
-    'access arguments' => array('administer content'),
+    'access arguments' => array('administer guardian module'),
   );
 
   return $items;
@@ -189,7 +205,7 @@ function _guardian_news_admin_form($form, &$form_state) {
   // Angular.
   $form['angular'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Enable AngularJS:'),
+    '#title' => t('Enable AngularJS'),
     '#description' => t('Allows you to use the module with AngularJS.'),
     '#default_value' => $values['angular'],
   );
