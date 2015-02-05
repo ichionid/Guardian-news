@@ -40,9 +40,10 @@ function guardian_news_block_view($delta = '') {
     case 'guardian_block':
 
       if (user_access('view guardian block')) {
-      $block['subject'] = t('Articles from The Guardian');
+        $block['subject'] = t('Articles from The Guardian');
 
-        if (variable_get('guardian_options_angular', 0) == 0) {
+        $options = _guardian_news_admin_load_options();
+        if ($options['angular'] == 0) {
 
           $articles = _guardian_news_get_articles();
 
@@ -55,7 +56,6 @@ function guardian_news_block_view($delta = '') {
           $block['content'] = theme('guardian_news', $variables);
         }
         else {
-          $options = _guardian_news_admin_load_options();
           drupal_add_js(array('guardian_latest_news' => array('url' => 'http://content.guardianapis.com/search')), 'setting');
           drupal_add_js(array('guardian_latest_news' => array('apiKey' => $options['api_key'])), 'setting');
           drupal_add_js(array('guardian_latest_news' => array('pageSize' => $options['post_number'])), 'setting');
